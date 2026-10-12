@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e9d1aa">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>إشارة الإمارات | Isharah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<style>
+:root{--cream:#e9d1aa;--cream-header:#e9d7b9;--cream-light:#f3e5cf;--ink:#3a1d0f;--ink-soft:#3a2618;--muted:#6f513a;--line:rgba(58,38,24,.16);--serif:"Bodoni Moda",Georgia,serif;--sans:Inter,Arial,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:100px}
+body{margin:0;min-height:100vh;font-family:var(--sans);color:var(--ink);background:var(--cream);font-size:15px}
+a{color:inherit}
+button,textarea{font:inherit}
+button:focus-visible,a:focus-visible,textarea:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.skip-link{position:fixed;top:8px;right:8px;z-index:20;transform:translateY(-150%);background:var(--cream-light);padding:10px 14px;border-radius:999px}
+.skip-link:focus{transform:translateY(0)}
+.announcement{height:29px;overflow:hidden;display:flex;align-items:center;background:var(--ink-soft);color:var(--cream-light);font-size:10px;letter-spacing:1.5px}
+.announcement-track{display:flex;align-items:center;flex:0 0 auto;min-width:max-content;animation:ticker 34s linear infinite}
+.announcement-track span{white-space:nowrap;padding-inline:34px}
+.announcement:hover .announcement-track{animation-play-state:paused}
+@keyframes ticker{to{transform:translateX(-50%)}}
+.site-header{height:76px;position:sticky;top:0;z-index:10;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0 max(28px,calc((100vw - 1240px)/2));background:rgba(233,215,185,.92);border-bottom:1px solid rgba(58,38,24,.08);backdrop-filter:blur(16px)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;justify-self:start}
+.brand .mark{width:40px;height:40px;display:grid;place-items:center;background:var(--cream-light);border:1px solid var(--line);border-radius:50%;font-size:20px}
+h1{font:500 17px var(--serif);margin:0;letter-spacing:.2px}
+.tagline{font-size:9px;color:var(--muted);margin-top:2px}
+.top-nav{display:flex;align-items:center;justify-content:center;gap:28px}
+.top-nav a,.nav-cta{font-size:12px;text-decoration:none;white-space:nowrap}
+.top-nav a{color:var(--ink-soft);transition:opacity .2s}
+.top-nav a:hover{opacity:.62}
+.nav-cta,.button-dark{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:44px;padding:0 21px;border-radius:999px;background:var(--ink-soft);color:var(--cream-light);text-decoration:none;font-size:12px;border:1px solid var(--ink-soft);transition:transform .2s,background .2s}
+.nav-cta{justify-self:end}
+.nav-cta:hover,.button-dark:hover{transform:translateY(-2px);background:#28180f}
+.page-shell{max-width:1240px;margin:0 auto;padding:0 32px}
+.intro{min-height:570px;display:grid;grid-template-columns:1fr .9fr;align-items:center;gap:48px;padding:64px 0 74px}
+.intro-copy{position:relative;z-index:1}
+.intro-copy{animation:rise-in .8s both}
+.intro-art{animation:appear-in 1s .12s both}
+@keyframes rise-in{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes appear-in{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.eyebrow,.section-kicker{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#654b35}
+.intro h2{max-width:650px;margin:19px 0 17px;font:400 clamp(54px,7vw,92px)/1.05 var(--serif);letter-spacing:-3px;color:var(--ink-soft)}
+.intro h2 em{font-style:normal;white-space:nowrap}
+.intro-copy>p:not(.eyebrow){max-width:475px;margin:0;color:var(--muted);font-size:15px;line-height:1.9}
+.intro-actions{display:flex;align-items:center;gap:12px;margin-top:28px}
+.button-outline{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:0 20px;border:1px solid var(--line);border-radius:999px;text-decoration:none;font-size:12px;transition:background .2s}
+.button-outline:hover{background:rgba(255,255,255,.3)}
+.intro-facts{display:flex;gap:24px;margin-top:34px;padding-top:17px;border-top:1px solid var(--line);max-width:475px}
+.intro-facts span{font-size:10px;color:var(--muted)}
+.intro-art{min-height:405px;position:relative;display:grid;place-items:center}
+.art-orbit{position:absolute;width:min(34vw,390px);aspect-ratio:1;border:1px solid rgba(58,38,24,.18);border-radius:50%;box-shadow:0 0 0 24px rgba(243,229,207,.25),0 0 0 25px rgba(58,38,24,.08),0 0 0 62px rgba(243,229,207,.16),0 0 0 63px rgba(58,38,24,.06);animation:orbit 52s linear infinite}
+.art-orbit::before,.art-orbit::after{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:#725239}
+.art-orbit::before{top:19%;left:10%}
+.art-orbit::after{right:8%;bottom:23%;width:6px;height:6px;background:#b69770}
+@keyframes orbit{to{transform:rotate(360deg)}}
+@keyframes float{50%{translate:0 -9px}}
+.signing-man{position:relative;z-index:1;width:min(100%,390px);height:auto;overflow:visible;filter:drop-shadow(0 18px 20px rgba(58,38,24,.11))}
+.signer-head{transform-box:fill-box;transform-origin:center bottom;animation:signer-nod 4.2s ease-in-out infinite}
+.signer-left-arm{transform-box:view-box;transform-origin:133px 253px;animation:sign-left 2.8s ease-in-out infinite}
+.signer-right-arm{transform-box:view-box;transform-origin:227px 253px;animation:sign-right 2.8s ease-in-out infinite}
+.signer-left-hand{transform-box:fill-box;transform-origin:70% 80%;animation:hand-left 1.4s ease-in-out infinite alternate}
+.signer-right-hand{transform-box:fill-box;transform-origin:30% 80%;animation:hand-right 1.4s .18s ease-in-out infinite alternate}
+@keyframes sign-left{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(12deg)}}
+@keyframes sign-right{0%,100%{transform:rotate(5deg)}50%{transform:rotate(-12deg)}}
+@keyframes hand-left{from{rotate:-9deg}to{rotate:9deg}}
+@keyframes hand-right{from{rotate:8deg}to{rotate:-8deg}}
+@keyframes signer-nod{0%,100%{transform:rotate(0)}50%{transform:rotate(1.5deg)}}
+.gesture-trail{fill:none;stroke:#9a7959;stroke-width:2;stroke-linecap:round;stroke-dasharray:2 7;opacity:0;animation:gesture-trace 2.8s ease-in-out infinite}
+.gesture-trail.right{animation-delay:1.4s}
+@keyframes gesture-trace{0%,100%{opacity:0;stroke-dashoffset:18}35%,65%{opacity:.6}80%{opacity:0;stroke-dashoffset:0}}
+.art-caption{position:absolute;bottom:8px;z-index:2;padding:8px 14px;border:1px solid var(--line);background:rgba(243,229,207,.88);font-family:var(--serif);font-size:13px;color:var(--muted);letter-spacing:.4px}
+.floating-note{position:absolute;z-index:2;display:grid;gap:4px;padding:12px 16px;background:rgba(243,229,207,.88);border:1px solid rgba(58,38,24,.12);border-radius:4px;box-shadow:0 12px 34px rgba(58,38,24,.08);font-size:11px;animation:float 5.5s ease-in-out infinite}
+.floating-note small{font-size:9px;color:var(--muted)}
+.floating-note.one{top:55px;right:0;transform:rotate(4deg)}
+.floating-note.two{left:2px;bottom:67px;transform:rotate(-5deg);animation-delay:-2.2s}
+.trust-strip{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:24px 0}
+.trust-item{display:flex;align-items:center;justify-content:center;gap:11px;text-align:right}
+.trust-item+.trust-item{border-right:1px solid var(--line)}
+.trust-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:rgba(243,229,207,.78);font-size:15px}
+.trust-item strong{display:block;font:400 14px var(--serif)}
+.trust-item small{display:block;margin-top:3px;color:var(--muted);font-size:10px}
+.features{padding:84px 0 76px;scroll-margin-top:95px}
+.section-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:30px}
+.section-heading h2,.story h2,.how h2{margin:7px 0 0;font:400 clamp(35px,5vw,56px)/1.1 var(--serif);letter-spacing:-1.5px;color:var(--ink-soft)}
+.section-heading>p{max-width:370px;margin:0;color:var(--muted);font-size:12px;line-height:1.8}
+.features-grid{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:26px}
+.card{position:relative;overflow:hidden;padding:28px;background:var(--cream-light);border:1px solid rgba(58,38,24,.1);border-radius:4px;box-shadow:0 16px 38px rgba(58,38,24,.055)}
+.card:nth-child(2){margin-top:54px}
+.card h2{display:flex;align-items:center;gap:10px;margin:0 0 9px;font:400 27px var(--serif);color:var(--ink-soft)}
+.card h2::before{content:"";width:7px;height:7px;border-radius:50%;background:#725239}
+.helper{font-size:12px;color:var(--muted);line-height:1.8;margin:0 0 17px}
+.video-box{position:relative;width:100%;aspect-ratio:4/3;border-radius:3px;overflow:hidden;background:#d9c6aa;border:1px solid rgba(58,38,24,.16)}
+video,canvas{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.live-badge{position:absolute;top:12px;left:12px;background:var(--cream-light);color:var(--ink);font-size:10px;padding:6px 11px;border-radius:999px;display:none;align-items:center;gap:6px;z-index:2}
+.live-badge.on{display:flex}
+.dot{width:6px;height:6px;border-radius:50%;background:#755334;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+button.primary{width:100%;min-height:48px;margin-top:12px;padding:12px 16px;background:var(--ink-soft);color:var(--cream-light);border:1px solid var(--ink-soft);border-radius:999px;font-size:13px;cursor:pointer;transition:transform .18s,background .18s}
+button.primary:disabled{opacity:.55;cursor:wait}
+button.primary:hover:not(:disabled){transform:translateY(-2px);background:#28180f}
+.status{font-size:11px;color:var(--muted);text-align:center;margin-top:99px;min-height:17px}
+.result{margin-top:13px;background:rgba(255,255,255,.38);border:1px solid var(--line);border-radius:3px;padding:20px;text-align:center;min-height:90px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.result .word{font:400 28px var(--serif);color:var(--ink-soft)}
+.result .word2,.sign-display .word2{font-size:12px;color:var(--muted)}
+.result .hint{font-size:10px;color:var(--muted)}
+.mic-row{display:flex;align-items:center;gap:12px}
+.mic-btn{width:54px;height:54px;flex:0 0 54px;border-radius:50%;font-size:20px;display:flex;align-items:center;justify-content:center;border:1px solid var(--ink-soft);cursor:pointer;background:var(--ink-soft);color:var(--cream-light);transition:transform .18s,background .18s}
+.mic-btn:hover{transform:scale(1.04)}
+.mic-btn.listening{animation:pulse 1.1s infinite}
+.lang-pill{display:flex;background:rgba(255,255,255,.38);border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:1}
+.lang-pill button{flex:1;background:transparent;border:0;color:var(--muted);padding:10px;font-size:12px;cursor:pointer}
+.lang-pill button.active{background:var(--ink-soft);color:var(--cream-light)}
+.heard{font-size:11px;color:var(--muted);margin:10px 0 16px;text-align:center;min-height:16px}
+.text-entry{width:100%;min-height:104px;resize:vertical;border:1px solid var(--line);border-radius:3px;background:rgba(255,255,255,.4);color:var(--ink);padding:13px;font:13px/1.7 var(--sans)}
+.text-entry::placeholder{color:#9a826b}
+.text-entry:focus-visible{outline-offset:2px}
+.action-row{display:flex;gap:8px;margin-top:10px}
+.action-row button,.quick-phrases button{border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink-soft);padding:10px 14px;font-size:11px;cursor:pointer;transition:background .18s,transform .18s}
+.action-row button{flex:1}
+.action-row button:first-child{background:var(--ink-soft);color:var(--cream-light);border-color:var(--ink-soft)}
+.action-row button:hover,.quick-phrases button:hover{background:#e7d4b8;transform:translateY(-1px)}
+.action-row button:first-child:hover{background:#28180f}
+.quick-phrases{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+.quick-phrases button{padding:7px 11px;font-size:10px}
+.sign-display{margin-top:14px;background:rgba(255,255,255,.34);border:1px solid var(--line);border-radius:3px;padding:18px;text-align:center;min-height:132px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.sign-display .emoji-big{font-size:50px}
+.sign-display .big-word{font:400 21px var(--serif);color:var(--ink-soft)}
+.empty{color:var(--muted);font-size:11px;text-align:center;padding:10px;line-height:1.7}
+.sign-card{width:100%;padding:10px 0;border-bottom:1px solid var(--line)}
+.sign-card:last-child{border-bottom:0}
+.sign-card .big-word{font:400 20px var(--serif)}
+.sign-card .word2{font-size:11px;color:var(--muted);margin-top:4px}
+.dictionary-link{display:inline-block;margin-top:8px;color:var(--ink-soft);font-size:10px;text-underline-offset:3px}
+.notice{border-right:2px solid #725239;background:rgba(255,255,255,.3);padding:11px 13px;margin-top:13px}
+.how{display:grid;grid-template-columns:.9fr 1.1fr;gap:42px;align-items:center;margin:22px 0 80px;padding:40px;background:var(--ink-soft);color:var(--cream-light);border-radius:4px}
+.how .section-kicker{color:#c6a987}
+.how h2{color:var(--cream-light);font-size:clamp(32px,4vw,46px)}
+.how-copy>p{max-width:400px;color:#d0bca3;font-size:12px;line-height:1.9}
+.how-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.step{min-height:125px;padding:16px 13px;border:1px solid rgba(243,229,207,.2);background:rgba(255,255,255,.035)}
+.step-number{font:400 22px var(--serif);color:#c6a987}
+.step strong{display:block;margin-top:12px;font-size:12px;font-weight:500}
+.step small{display:block;margin-top:6px;color:#d0bca3;font-size:10px;line-height:1.6}
+.how .dictionary-link{color:var(--cream-light)}
+.note{max-width:650px;margin:0 auto 28px;color:var(--muted);font-size:10px;text-align:center;line-height:1.8}
+.site-footer{background:var(--cream-header);border-top:1px solid var(--line)}
+.footer-inner{max-width:1240px;margin:0 auto;padding:28px 32px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px}
+.footer-brand{font:400 17px var(--serif)}
+.footer-inner p{margin:4px 0 0;color:var(--muted);font-size:10px}
+.footer-link{font-size:11px;text-underline-offset:3px}
+body.motion-ready [data-reveal]{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.7,.2,1)}
+body.motion-ready [data-reveal].is-visible{opacity:1;transform:translateY(0)}
+body.motion-ready .trust-item:nth-child(2),body.motion-ready .step:nth-child(2){transition-delay:.12s}
+body.motion-ready .trust-item:nth-child(3),body.motion-ready .step:nth-child(3){transition-delay:.24s}
+@media(max-width:850px){
+  .site-header{grid-template-columns:1fr auto;padding:0 20px}
+  .top-nav{display:none}
+  .intro{min-height:500px;gap:18px}
+  .intro-art{min-height:340px}
+  .signing-man{width:min(100%,340px)}
+  .how{grid-template-columns:1fr;gap:22px}
+}
+@media(max-width:600px){
+  html{scroll-padding-top:82px}
+  .announcement{height:25px;font-size:8px;letter-spacing:1px}
+  .site-header{height:64px;padding:0 14px}
+  .brand{gap:7px}
+  .brand .mark{width:34px;height:34px;font-size:17px}
+  h1{font-size:15px}
+  .tagline{font-size:8px}
+  .nav-cta{min-height:38px;padding:0 13px;font-size:10px}
+  .page-shell{padding:0 18px}
+  .intro{min-height:auto;grid-template-columns:1fr;gap:4px;padding:59px 0 44px}
+  .intro h2{font-size:clamp(53px,15vw,76px);letter-spacing:-2.5px;margin:16px 0 13px}
+  .intro-copy>p:not(.eyebrow){font-size:13px}
+  .intro-actions{gap:8px;margin-top:21px}
+  .button-dark,.button-outline{min-height:42px;padding:0 14px;font-size:10px}
+  .intro-facts{gap:13px;margin-top:24px;padding-top:13px}
+  .intro-facts span{font-size:9px}
+  .intro-art{min-height:290px;margin-top:25px}
+  .art-orbit{width:218px;box-shadow:0 0 0 15px rgba(243,229,207,.25),0 0 0 16px rgba(58,38,24,.08),0 0 0 38px rgba(243,229,207,.16),0 0 0 39px rgba(58,38,24,.06)}
+  .signing-man{width:min(100%,310px)}
+  .floating-note.one{top:24px;right:0}
+  .floating-note.two{left:0;bottom:25px}
+  .trust-strip{padding:17px 0}
+  .trust-item{gap:6px}
+  .trust-icon{width:27px;height:27px;font-size:12px}
+  .trust-item strong{font-size:11px}
+  .trust-item small{font-size:8px}
+  .features{padding:59px 0 42px}
+  .section-heading{display:block;margin-bottom:22px}
+  .section-heading h2,.story h2,.how h2{font-size:39px}
+  .section-heading>p{margin-top:10px;font-size:11px}
+  .features-grid{grid-template-columns:1fr;gap:14px}
+  .card,.card:nth-child(2){margin-top:0;padding:20px}
+  .card h2{font-size:24px}
+  .how{margin:12px 0 48px;padding:25px 19px}
+  .how-steps{gap:7px}
+  .step{min-height:120px;padding:12px 9px}
+  .step strong{font-size:10px}
+  .step small{font-size:9px}
+  .footer-inner{padding:22px 18px;align-items:center;text-align:center}
+  .footer-brand{font-size:15px}
+  .footer-inner p{max-width:210px;line-height:1.6}
+  .footer-link{font-size:10px;text-align:center}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">تجاوز إلى المحتوى</a>
+<div class="announcement" aria-label="لغة الإشارة الإماراتية — مساحة للتواصل والتعلّم للجميع">
+  <div class="announcement-track"><span>لغة الإشارة الإماراتية &nbsp; ✳ &nbsp; مساحة للتواصل والتعلّم للجميع &nbsp; ✳ &nbsp; إشارة اليوم تصنع فرقاً &nbsp; ✳ &nbsp;</span><span aria-hidden="true">لغة الإشارة الإماراتية &nbsp; ✳ &nbsp; مساحة للتواصل والتعلّم للجميع &nbsp; ✳ &nbsp; إشارة اليوم تصنع فرقاً &nbsp; ✳ &nbsp;</span></div>
+</div>
+<header class="site-header">
+  <a class="brand" href="#home" aria-label="إشارة الإمارات، الرئيسية">
+    <span class="mark" aria-hidden="true">🤟</span>
+    <span><h1>إشارة الإمارات</h1><span class="tagline">لغة تجمعنا</span></span>
+  </a>
+  <nav class="top-nav" aria-label="التنقل الرئيسي">
+    <a href="#camera-card">الكاميرا</a>
+    <a href="#speech-card">الكلام والنص</a>
+    <a href="#how-it-works">عن التجربة</a>
+  </nav>
+  <a class="nav-cta" href="#speech-card">ابدأ التواصل <span aria-hidden="true">↙️</span></a>
+</header>
+
+<main id="main-content">
+  <div class="page-shell">
+    <section class="intro" id="home" aria-labelledby="heroTitle">
+      <div class="intro-copy">
+        <p class="eyebrow">لغة الإشارة الإماراتية · تواصل بصري</p>
+        <h2 id="heroTitle">كل إشارة،<br><em>تقربنا أكثر.</em></h2>
+        <p>مساحة هادئة للتواصل والتعلّم — اكتشف وضعية اليد، أو ابحث عن مرجع إشارة لعبارتك بالعربية والإنجليزية.</p>
+        <div class="intro-actions">
+          <a class="button-dark" href="#speech-card">جرّب البحث <span aria-hidden="true">↙️</span></a>
+          <a class="button-outline" href="#camera-card">استكشف الكاميرا</a>
+        </div>
+        <div class="intro-facts" aria-label="معلومات عن الموقع">
+          <span>01 &nbsp; لغة الإشارة الإماراتية</span>
+          <span>02 &nbsp; صوت، نص، وكاميرا</span>
+        </div>
+      </div>
+      <div class="intro-art" aria-hidden="true">
+        <div class="art-orbit"></div>
+        <div class="floating-note one"><small>التواصل يبدأ</small><span>بإشارة بسيطة</span></div>
+        <svg class="signing-man" viewBox="0 0 360 440" role="img" aria-label="رسم توضيحي لرجل يرتدي الكندورة والغترة ويحرك يديه">
+          <defs>
+            <linearGradient id="robe" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#fffdf8"/>
+              <stop offset="1" stop-color="#e7dfd2"/>
+            </linearGradient>
+            <linearGradient id="ghutra" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#fffefa"/>
+              <stop offset="1" stop-color="#e8e2d8"/>
+            </linearGradient>
+            <linearGradient id="skin" x1="0" x2="1">
+              <stop offset="0" stop-color="#d59d73"/>
+              <stop offset="1" stop-color="#f0c39d"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="180" cy="414" rx="111" ry="13" fill="#6d5034" opacity=".13"/>
+          <g class="signer-body">
+            <path d="M110 204 Q126 180 157 176 L203 176 Q234 180 250 204 L286 418 Q288 433 272 433 H88 Q72 433 74 418 Z" fill="url(#robe)" stroke="#d8cdbd" stroke-width="2"/>
+            <path d="M180 193 V432" fill="none" stroke="#d7cdbf" stroke-width="2" opacity=".8"/>
+            <path d="M162 179 L180 197 L198 179" fill="#f5efe5" stroke="#cfc4b4" stroke-width="2"/>
+            <path d="M179 202 V283" stroke="#c5b9a8" stroke-width="2"/>
+            <circle cx="179" cy="222" r="2.4" fill="#a48d71"/>
+            <circle cx="179" cy="241" r="2.4" fill="#a48d71"/>
+            <circle cx="179" cy="260" r="2.4" fill="#a48d71"/>
+            <path d="M115 213 Q133 225 143 258 M245 213 Q227 225 217 258" fill="none" stroke="#e4dbce" stroke-width="2"/>
+          </g>
+          <g aria-hidden="true">
+            <path class="gesture-trail" d="M114 278 Q122 261 143 252"/>
+            <path class="gesture-trail right" d="M246 278 Q238 261 217 252"/>
+          </g>
+          <g class="signer-left-arm">
+            <path d="M113 202 Q96 206 89 229 L111 259 Q128 261 145 240 L134 214 Q125 204 113 202Z" fill="url(#robe)" stroke="#d8cdbd" stroke-width="2"/>
+            <path d="M111 250 Q130 263 151 256 L176 241 Q184 235 179 229 Q175 224 168 229 L149 238 L133 232Z" fill="url(#skin)" stroke="#b98560" stroke-width="1.5"/>
+            <g class="signer-left-hand">
+              <path d="M173 241 Q169 235 173 228 L177 216 Q179 211 183 213 Q187 214 185 220 L184 228 L190 212 Q192 207 196 209 Q200 211 197 216 L192 230 L201 218 Q205 214 208 217 Q211 220 207 225 L199 237 L207 231 Q212 228 214 232 Q216 236 211 240 L200 250 Q192 257 182 251Z" fill="url(#skin)" stroke="#b98560" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M181 219 L184 230 M193 215 L190 229 M204 222 L197 234" fill="none" stroke="#bd8966" stroke-width="1.2" stroke-linecap="round"/>
+            </g>
+          </g>
+          <g class="signer-right-arm">
+            <path d="M247 202 Q264 206 271 229 L249 259 Q232 261 215 240 L226 214 Q235 204 247 202Z" fill="url(#robe)" stroke="#d8cdbd" stroke-width="2"/>
+            <path d="M249 250 Q230 263 209 256 L184 241 Q176 235 181 229 Q185 224 192 229 L211 238 L227 232Z" fill="url(#skin)" stroke="#b98560" stroke-width="1.5"/>
+            <g class="signer-right-hand">
+              <path d="M187 241 Q191 235 187 228 L183 216 Q181 211 177 213 Q173 214 175 220 L176 228 L170 212 Q168 207 164 209 Q160 211 163 216 L168 230 L159 218 Q155 214 152 217 Q149 220 153 225 L161 237 L153 231 Q148 228 146 232 Q144 236 149 240 L160 250 Q168 257 178 251Z" fill="url(#skin)" stroke="#b98560" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M179 219 L176 230 M167 215 L170 229 M156 222 L163 234" fill="none" stroke="#bd8966" stroke-width="1.2" stroke-linecap="round"/>
+            </g>
+          </g>
+          <g class="signer-head">
+            <path d="M128 93 Q128 34 180 27 Q232 34 232 93 L264 190 Q243 183 223 169 L218 98 Q180 117 142 98 L137 169 Q117 183 96 190Z" fill="url(#ghutra)" stroke="#d2c9bc" stroke-width="2"/>
+            <path d="M140 82 Q142 44 180 39 Q218 44 220 82 L216 135 Q209 166 180 174 Q151 166 144 135Z" fill="url(#skin)" stroke="#b98560" stroke-width="1.5"/>
+            <path d="M130 80 Q135 36 180 30 Q225 36 230 80" fill="none" stroke="#4c3829" stroke-width="7" stroke-linecap="round"/>
+            <path d="M143 94 Q159 85 171 92 M189 92 Q201 85 217 94" fill="none" stroke="#654633" stroke-width="2" stroke-linecap="round"/>
+            <ellipse cx="159" cy="105" rx="3" ry="4" fill="#38281e"/>
+            <ellipse cx="201" cy="105" rx="3" ry="4" fill="#38281e"/>
+            <path d="M180 106 L176 124 L183 125 M169 141 Q180 148 192 141" fill="none" stroke="#986748" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M136 104 Q122 167 104 184 M224 104 Q238 167 256 184" fill="none" stroke="#d5ccbf" stroke-width="2"/>
+            <path d="M148 162 Q180 181 212 162" fill="none" stroke="#eee9e0" stroke-width="3"/>
+          </g>
+        </svg>
+        <div class="art-caption">حركة توضيحية مستوحاة من الإشارة</div>
+        <div class="floating-note two"><small>مرحباً بك</small><span>أهلاً في إشارة</span></div>
+      </div>
+    </section>
+
+    <section class="trust-strip" aria-label="مزايا الموقع">
+        <div class="trust-item" data-reveal><span class="trust-icon" aria-hidden="true">⌁</span><span><strong>تعلّم واعٍ</strong><small>مرجع موثوق قبل الترجمة</small></span></div>
+        <div class="trust-item" data-reveal><span class="trust-icon" aria-hidden="true">◉</span><span><strong>طريقتك في التواصل</strong><small>صوت أو كتابة أو كاميرا</small></span></div>
+        <div class="trust-item" data-reveal><span class="trust-icon" aria-hidden="true">✳</span><span><strong>للجميع</strong><small>واجهة عربية سهلة وواضحة</small></span></div>
+    </section>
+
+    <section class="features" id="features" aria-labelledby="featuresTitle">
+      <div class="section-heading">
+        <div><span class="section-kicker">طرق التواصل &nbsp; / &nbsp; 01—02</span><h2 id="featuresTitle">اختر طريقتك.</h2></div>
+        <p>ابدأ بالطريقة الأقرب لك. يمكنك استخدام الصوت أو الكتابة للعثور على عبارات من القائمة التجريبية.</p>
+      </div>
+      <div class="features-grid">
+        <section class="card" id="camera-card" aria-labelledby="cameraTitle" data-reveal>
+          <h2 id="cameraTitle">إشارة → وضعية اليد</h2>
+          <p class="helper">وجّه يدك إلى الكاميرا لرصد وضعيتها. التعرّف الحالي تجريبي ولا يترجم الإشارات الإماراتية إلى كلام.</p>
+          <div class="video-box">
+            <video id="video" playsinline muted autoplay aria-label="معاينة الكاميرا"></video>
+            <canvas id="canvas" aria-hidden="true"></canvas>
+            <div class="live-badge" id="liveBadge"><span class="dot"></span>مباشر</div>
+          </div>
+          <button class="primary" id="startBtn" type="button">تشغيل الكاميرا</button>
+          <div class="status" id="status" role="status" aria-live="polite">امنح إذن الكاميرا لرصد وضعية اليد</div>
+          <div class="result">
+            <div class="word" id="word">—</div>
+            <div class="word2" id="word2"></div>
+            <div class="hint" id="hint">لن تُعرض ترجمة لفظية غير مؤكدة</div>
+          </div>
+        </section>
+
+        <section class="card" id="speech-card" aria-labelledby="speechTitle" data-reveal>
+          <h2 id="speechTitle">كلام أو نص → مرجع</h2>
+          <p class="helper">تعرّف على عبارة منطوقة أو اكتبها، وستظهر العبارات المتطابقة مع رابط للقاموس الإماراتي الرسمي.</p>
+          <div class="mic-row">
+            <button class="mic-btn" id="micBtn" type="button" aria-label="بدء الاستماع" title="بدء الاستماع">🎤</button>
+            <div class="lang-pill" role="group" aria-label="لغة التعرف على الكلام">
+              <button id="pillAr" class="active" type="button" aria-pressed="true">عربي</button>
+              <button id="pillEn" type="button" aria-pressed="false">EN</button>
+            </div>
+          </div>
+          <div class="heard" id="heardTxt" role="status" aria-live="polite">اضغط المايك أو اكتب عبارة</div>
+          <label class="helper" for="textInput">اكتب عبارة بالعربية أو الإنجليزية</label>
+          <textarea class="text-entry" id="textInput" placeholder="مثال: شكراً، أحتاج مساعدة..." dir="auto"></textarea>
+          <div class="action-row">
+            <button id="translateBtn" type="button">اعرض العبارات</button>
+            <button id="speakBtn" type="button">استمع للنص &nbsp; 🔊</button>
+          </div>
+          <div class="quick-phrases" id="quickPhrases" aria-label="عبارات سريعة"></div>
+          <div class="sign-display" id="signDisplay" aria-live="polite">
+            <div class="empty">ستظهر هنا العبارات المطابقة وروابط مرجع الإشارات</div>
+          </div>
+          <div class="notice helper">لا يحتوي هذا الإصدار على نموذج مدرّب لترجمة لغة الإشارة الإماراتية مباشرةً. رصد اليد تجريبي، والقاموس الرسمي هو المرجع للإشارات الصحيحة.</div>
+        </section>
+      </div>
+    </section>
+
+    <section class="how" id="how-it-works" aria-labelledby="howTitle">
+      <div class="how-copy">
+        <span class="section-kicker">كيف تعمل التجربة؟</span>
+        <h2 id="howTitle">خطوات صغيرة.<br>تواصل أكبر.</h2>
+        <p>تعامل مع النتائج كوسيلة للاستكشاف لا كترجمة معتمدة. لغة الإشارة لها قواعدها وسياقها الخاص.</p>
+        <a class="dictionary-link" href="https://www.za.gov.ae/en/Sign-Language-Dictionary/UAE-Sign-Language-Categories" target="_blank" rel="noopener noreferrer">افتح قاموس لغة الإشارة الإماراتية ↗️</a>
+      </div>
+      <div class="how-steps">
+        <div class="step" data-reveal><span class="step-number">01</span><strong>اختر المدخل</strong><small>تحدث، اكتب، أو فعّل الكاميرا.</small></div>
+        <div class="step" data-reveal><span class="step-number">02</span><strong>استكشف النتيجة</strong><small>طابق الكلمات أو شاهد وصف اليد.</small></div>
+        <div class="step" data-reveal><span class="step-number">03</span><strong>تحقق من المرجع</strong><small>ارجع للقاموس الرسمي لتعلّم الإشارة.</small></div>
+      </div>
+    </section>
+    <p class="note">لغة الإشارة الإماراتية لغة بصرية مستقلة وليست تحويلاً حرفياً للكلام. لم يتم تدريب أداة الكاميرا على ترجمة إشارات فعلية.</p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div><div class="footer-brand">إشارة الإمارات</div><p>مساحة للتواصل والتعلّم بلغة الإشارة الإماراتية.</p></div>
+    <a class="footer-link" href="https://www.za.gov.ae/en/Sign-Language-Dictionary/UAE-Sign-Language-Categories" target="_blank" rel="noopener noreferrer">القاموس الإماراتي الرسمي ↗️</a>
+  </div>
+</footer>
+
+<script>
+const LIB = [
+  {ar:'مرحباً', en:'Hello'},
+  {ar:'لا', en:'No'},
+  {ar:'شكراً', en:'Thank you'},
+  {ar:'انتظر', en:'Wait'},
+  {ar:'نعم', en:'Yes'},
+  {ar:'مساعدة', en:'Help'},
+  {ar:'مع السلامة', en:'Goodbye'},
+  {ar:'من فضلك', en:'Please'},
+  {ar:'ماء', en:'Water'},
+  {ar:'أحبك', en:'I love you'}
+];
+const DICTIONARY_URL = 'https://www.za.gov.ae/en/Sign-Language-Dictionary/UAE-Sign-Language-Categories';
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const wordEl = document.getElementById('word');
+const word2El = document.getElementById('word2');
+const hintEl = document.getElementById('hint');
+const statusEl = document.getElementById('status');
+const startBtn = document.getElementById('startBtn');
+const liveBadge = document.getElementById('liveBadge');
+const micBtn = document.getElementById('micBtn');
+const heardTxt = document.getElementById('heardTxt');
+const signDisplay = document.getElementById('signDisplay');
+const textInput = document.getElementById('textInput');
+const pillAr = document.getElementById('pillAr');
+const pillEn = document.getElementById('pillEn');
+const quickPhrases = document.getElementById('quickPhrases');
+const bones = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[0,9],[9,10],[10,11],[11,12],[0,13],[13,14],[14,15],[15,16],[0,17],[17,18],[18,19],[19,20],[5,9],[9,13],[13,17]];
+const fingers = ['الإبهام','السبابة','الوسطى','البنصر','الخنصر'];
+let camera = null;
+let hands = null;
+let running = false;
+let recogLang = 'ar-AE';
+let recognition = null;
+let listening = false;
+
+function normalize(text) {
+  return text.toLocaleLowerCase()
+    .replace(/[\u064B-\u065F\u0670]/g, '')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .trim()
+    .split(/\s+/)
+    .map(word => word.replace(/^[وف](?=[\u0600-\u06FF])/, ''))
+    .filter(Boolean);
+}
+
+function findPhrases(text) {
+  const source = normalize(text);
+  const matches = [];
+  for (const item of LIB) {
+    for (const value of [item.ar, item.en]) {
+      const phrase = normalize(value);
+      for (let start = 0; phrase.length && start <= source.length - phrase.length; start++) {
+        if (phrase.every((word, index) => source[start + index] === word)) {
+          matches.push({item, start, length: phrase.length});
+          break;
+        }
+      }
+    }
+  }
+  matches.sort((a, b) => a.start - b.start || b.length - a.length);
+  const selected = [];
+  for (const match of matches) {
+    if (!selected.some(item => match.start < item.start + item.length && item.start < match.start + match.length)) {
+      selected.push(match);
+    }
+  }
+  return selected.map(match => match.item);
+}
+
+function renderPhrases(text) {
+  signDisplay.replaceChildren();
+  const matches = findPhrases(text);
+  if (!text.trim()) {
+    signDisplay.innerHTML = '<div class="empty">اكتبي عبارة أو استخدمي المايك لبدء البحث</div>';
+    return;
+  }
+  if (!matches.length) {
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.textContent = 'لم أعثر على عبارة في القائمة التجريبية. ابحثي عنها في القاموس الإماراتي الرسمي.';
+    const link = document.createElement('a');
+    link.className = 'dictionary-link';
+    link.href = DICTIONARY_URL;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'فتح قاموس لغة الإشارة الإماراتية';
+    signDisplay.append(empty, link);
+    return;
+  }
+  for (const item of matches) {
+    const card = document.createElement('div');
+    card.className = 'sign-card';
+    const arabic = document.createElement('div');
+    arabic.className = 'big-word';
+    arabic.textContent = item.ar;
+    const english = document.createElement('div');
+    english.className = 'word2';
+    english.textContent = item.en;
+    const link = document.createElement('a');
+    link.className = 'dictionary-link';
+    link.href = DICTIONARY_URL;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'شاهد/ي مرجع الإشارة في القاموس الإماراتي الرسمي ↗️';
+    card.append(arabic, english, link);
+    signDisplay.append(card);
+  }
+}
+
+function speak(text) {
+  if (!('speechSynthesis' in window)) {
+    heardTxt.textContent = 'ميزة قراءة النص غير مدعومة في هذا المتصفح.';
+    return;
+  }
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = recogLang;
+  utterance.onerror = event => { heardTxt.textContent = 'تعذرت قراءة النص: ' + event.error; };
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utterance);
+}
+
+function fingerUp(landmarks, tip, pip) {
+  return landmarks[tip].y < landmarks[pip].y - 0.02;
+}
+
+function detectPattern(landmarks) {
+  const thumbExtended = Math.abs(landmarks[4].x - landmarks[2].x) > 0.08;
+  return [thumbExtended, fingerUp(landmarks,8,6), fingerUp(landmarks,12,10), fingerUp(landmarks,16,14), fingerUp(landmarks,20,18)];
+}
+
+function describePattern(pattern) {
+  const extended = fingers.filter((_, index) => pattern[index]);
+  if (!extended.length) return 'قبضة مغلقة';
+  if (extended.length === fingers.length) return 'كف مفتوحة';
+  return extended.join('، ') + ' ممدودة';
+}
+
+function onResults(results) {
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const landmarks = results.multiHandLandmarks && results.multiHandLandmarks[0];
+  if (!landmarks) {
+    wordEl.textContent = '—';
+    word2El.textContent = '';
+    hintEl.textContent = 'ضعي يدك أمام الكاميرا';
+    return;
+  }
+  ctx.lineWidth = Math.max(2, canvas.width * 0.004);
+  ctx.strokeStyle = '#d4af37';
+  for (const [from, to] of bones) {
+    ctx.beginPath();
+    ctx.moveTo(landmarks[from].x * canvas.width, landmarks[from].y * canvas.height);
+    ctx.lineTo(landmarks[to].x * canvas.width, landmarks[to].y * canvas.height);
+    ctx.stroke();
+  }
+  ctx.fillStyle = '#1fae7a';
+  for (const point of landmarks) {
+    ctx.beginPath();
+    ctx.arc(point.x * canvas.width, point.y * canvas.height, canvas.width * 0.006, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  wordEl.textContent = describePattern(detectPattern(landmarks));
+  word2El.textContent = '';
+  hintEl.textContent = 'وصف لوضعية الأصابع فقط — ليس ترجمة للغة الإشارة';
+}
+
+async function startCamera() {
+  if (running) return;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    statusEl.textContent = 'الكاميرا غير متاحة. افتحي الموقع عبر HTTPS أو على localhost.';
+    return;
+  }
+  if (typeof Hands === 'undefined' || typeof Camera === 'undefined') {
+    statusEl.textContent = 'تعذر تحميل مكتبة الكاميرا. تحققي من اتصال الإنترنت ثم أعيدي تحميل الصفحة.';
+    return;
+  }
+  startBtn.disabled = true;
+  statusEl.textContent = 'جارٍ تشغيل الكاميرا...';
+  try {
+    hands = new Hands({locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+    hands.setOptions({maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6});
+    hands.onResults(onResults);
+    camera = new Camera(video, {
+      onFrame: async () => { await hands.send({image: video}); },
+      width: 480,
+      height: 360
+    });
+    await camera.start();
+    running = true;
+    liveBadge.classList.add('on');
+    startBtn.textContent = 'إيقاف الكاميرا';
+    startBtn.disabled = false;
+    statusEl.textContent = 'الكاميرا تعمل — يتم رصد وضعية اليد فقط';
+  } catch (error) {
+    if (camera) camera.stop();
+    if (hands) hands.close();
+    camera = null;
+    hands = null;
+    startBtn.disabled = false;
+    statusEl.textContent = 'تعذر تشغيل الكاميرا: ' + error.message;
+  }
+}
+
+function stopCamera() {
+  if (camera) camera.stop();
+  if (hands) hands.close();
+  camera = null;
+  hands = null;
+  running = false;
+  video.srcObject = null;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  liveBadge.classList.remove('on');
+  startBtn.textContent = 'تشغيل الكاميرا';
+  statusEl.textContent = 'تم إيقاف الكاميرا';
+  wordEl.textContent = '—';
+  word2El.textContent = '';
+  hintEl.textContent = 'لن تُعرض ترجمة لفظية غير مؤكدة';
+}
+
+startBtn.addEventListener('click', () => running ? stopCamera() : startCamera());
+document.getElementById('translateBtn').addEventListener('click', () => renderPhrases(textInput.value));
+document.getElementById('speakBtn').addEventListener('click', () => {
+  if (textInput.value.trim()) speak(textInput.value.trim());
+});
+textInput.addEventListener('keydown', event => {
+  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') renderPhrases(textInput.value);
+});
+
+const languageButtons = [[pillAr, pillEn, 'ar-AE'], [pillEn, pillAr, 'en-US']];
+for (const [button, other, language] of languageButtons) {
+  button.addEventListener('click', () => {
+    recogLang = language;
+    button.classList.add('active');
+    other.classList.remove('active');
+    button.setAttribute('aria-pressed', 'true');
+    other.setAttribute('aria-pressed', 'false');
+  });
+}
+
+for (const item of LIB) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = item.ar;
+  button.addEventListener('click', () => {
+    textInput.value = item.ar;
+    renderPhrases(item.ar);
+  });
+  quickPhrases.append(button);
+}
+
+micBtn.addEventListener('click', () => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    heardTxt.textContent = 'التعرّف على الكلام غير مدعوم هنا. اكتبي العبارة بدلاً من ذلك أو جرّبي متصفحاً يدعمه.';
+    return;
+  }
+  if (listening) {
+    recognition.stop();
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.lang = recogLang;
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.onstart = () => {
+    listening = true;
+    micBtn.classList.add('listening');
+    micBtn.setAttribute('aria-label', 'إيقاف الاستماع');
+    micBtn.title = 'إيقاف الاستماع';
+    heardTxt.textContent = 'جارٍ الاستماع...';
+  };
+  recognition.onend = () => {
+    listening = false;
+    micBtn.classList.remove('listening');
+    micBtn.setAttribute('aria-label', 'بدء الاستماع');
+    micBtn.title = 'بدء الاستماع';
+  };
+  recognition.onerror = event => {
+    heardTxt.textContent = 'تعذر التعرّف على الكلام: ' + event.error;
+  };
+  recognition.onresult = event => {
+    const text = event.results[0][0].transcript;
+    textInput.value = text;
+    heardTxt.textContent = 'تم التعرّف على: ' + text;
+    renderPhrases(text);
+  };
+  try {
+    recognition.start();
+  } catch (error) {
+    heardTxt.textContent = 'تعذر بدء الاستماع: ' + error.message;
+  }
+});
+
+window.addEventListener('pagehide', () => {
+  if (camera) camera.stop();
+  if (hands) hands.close();
+  if (recognition && listening) recognition.stop();
+});
+
+if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.body.classList.add('motion-ready');
+  const revealObserver = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+      }
+    }
+  }, {threshold: 0.12});
+  document.querySelectorAll('[data-reveal]').forEach(element => revealObserver.observe(element));
+}
+
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js').catch(()=>{}); }
+</script>
+</body>
+</html>
